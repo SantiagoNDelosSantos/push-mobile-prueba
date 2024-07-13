@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notificación Push</title>
+</head>
+<body>
+    <h1>Bienvenido a mi sitio web</h1>
+    <p>Se enviará una notificación cuando entres a esta pestaña.</p>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Verificar si el navegador soporta notificaciones
+            if (!('Notification' in window)) {
+                alert('Tu navegador no soporta notificaciones.');
+                return;
+            }
+
+            // Verificar el permiso de notificación
+            if (Notification.permission === 'granted') {
+                mostrarNotificacion();
+            } else if (Notification.permission !== 'denied') {
+                // Pedir permiso para mostrar notificaciones
+                Notification.requestPermission().then(permission => {
+                    if (permission === 'granted') {
+                        mostrarNotificacion();
+                    }
+                });
+            }
+        });
+
+        function mostrarNotificacion() {
+            // Registrar el Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('serviceWorker.js').then(registration => {
+                    registration.showNotification('¡Hola!', {
+                        body: 'Gracias por visitar mi sitio web.',
+                        icon: 'icon.png'
+                    });
+                }).catch(error => {
+                    console.error('Error al registrar el Service Worker:', error);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
